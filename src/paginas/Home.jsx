@@ -56,10 +56,10 @@ function Home() {
               Todo desde un solo lugar.
             </p>
             <div className="d-flex flex-wrap gap-3">
-              <Link to="/reservas" className="btn btn-warning btn-lg px-4">
+              <Link to="/registrar-reserva" className="btn btn-warning btn-lg px-4">
                 <i className="bi bi-calendar-plus me-2"></i>Hacer una reserva
               </Link>
-              <Link to="/espacios" className="btn btn-outline-light btn-lg px-4">
+              <Link to="/registrar-espacio" className="btn btn-outline-light btn-lg px-4">
                 <i className="bi bi-plus-circle me-2"></i>Registrar espacio
               </Link>
             </div>
@@ -107,7 +107,7 @@ function Home() {
                 <p className="text-muted">
                   Crea las zonas comunes de la unidad con su descripción, foto y aforo máximo.
                 </p>
-                <Link to="/espacios" className="btn btn-marca mt-auto">
+                <Link to="/registrar-espacio" className="btn btn-marca mt-auto">
                   Ir al formulario <i className="bi bi-arrow-right ms-1"></i>
                 </Link>
               </div>
@@ -121,7 +121,7 @@ function Home() {
                 <p className="text-muted">
                   Elige la fecha y la hora en que quieres usar uno de los espacios disponibles.
                 </p>
-                <Link to="/reservas" className="btn btn-marca mt-auto">
+                <Link to="/registrar-reserva" className="btn btn-marca mt-auto">
                   Ir al formulario <i className="bi bi-arrow-right ms-1"></i>
                 </Link>
               </div>
