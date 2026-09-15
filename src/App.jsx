@@ -19,6 +19,7 @@ function App() {
         <Route path="/registrar-reserva" element={<RegistroReserva />} />
         <Route path="/usuarios" element={<ListaUsuarios />} />
         <Route path="/listaEspacios" element={<ListasEspacios />} />
+        <Route path="/espacios" element={<RegistroEspacio />} />
       </Routes>
     </BrowserRouter>
   )
