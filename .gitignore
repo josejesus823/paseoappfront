@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Variables de entorno con secretos reales (.env.development y .env.production
+# SI se suben: solo contienen la URL publica del backend, no secretos)
+.env
+.env.*.local
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

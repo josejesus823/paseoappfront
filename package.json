@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "axios": "^1.20.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "react": "^19.2.8",
@@ -17,6 +20,7 @@
     "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",

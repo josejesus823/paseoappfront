@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PanelFormulario from '../componentes/PanelFormulario'
+import { crearEspacio } from '../services/espacioService'
 
 const IMAGEN = 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&q=80'
 
@@ -14,6 +15,8 @@ function RegistroEspacio() {
     aforo: '',
   })
   const [errores, setErrores] = useState({})
+  const [errorServidor, setErrorServidor] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   const manejarCambio = (evento) => {
     const { name, value } = evento.target
@@ -37,13 +40,21 @@ function RegistroEspacio() {
     return nuevosErrores
   }
 
-  const manejarEnvio = (evento) => {
+  const manejarEnvio = async (evento) => {
     evento.preventDefault()
     const nuevosErrores = validar()
     setErrores(nuevosErrores)
+    setErrorServidor('')
     if (Object.keys(nuevosErrores).length === 0) {
-      console.log('Espacio registrado:', { ...espacio, aforo: Number(espacio.aforo) })
-      navegar('/home')
+      setEnviando(true)
+      try {
+        await crearEspacio({ ...espacio, aforo: Number(espacio.aforo) })
+        navegar('/espacios')
+      } catch (error) {
+        setErrorServidor(error.message)
+      } finally {
+        setEnviando(false)
+      }
     }
   }
 
@@ -56,6 +67,8 @@ function RegistroEspacio() {
     >
       <h2 className="fw-bold mb-1">Nuevo espacio</h2>
       <p className="text-muted mb-4">Completa la información del espacio.</p>
+
+      {errorServidor && <div className="alert alert-danger">{errorServidor}</div>}
 
       <form onSubmit={manejarEnvio} noValidate>
         <div className="mb-3">
@@ -123,8 +136,8 @@ function RegistroEspacio() {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-marca btn-lg w-100">
-          <i className="bi bi-save me-2"></i>Guardar espacio
+        <button type="submit" className="btn btn-marca btn-lg w-100" disabled={enviando}>
+          <i className="bi bi-save me-2"></i>{enviando ? 'Guardando...' : 'Guardar espacio'}
         </button>
       </form>
     </PanelFormulario>

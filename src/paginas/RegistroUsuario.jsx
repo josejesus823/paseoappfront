@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PanelFormulario from '../componentes/PanelFormulario'
+import { crearUsuario } from '../services/usuarioService'
+import { guardarSesion } from '../services/sesion'
 
 const IMAGEN = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1400&q=80'
 
@@ -8,12 +10,14 @@ function RegistroUsuario() {
   const navegar = useNavigate()
 
   const [usuario, setUsuario] = useState({
-    nombres: '',
+    nombre: '',
     correo: '',
-    contraseña: '',
+    contrasena: '',
     rol: '',
   })
   const [errores, setErrores] = useState({})
+  const [errorServidor, setErrorServidor] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   const manejarCambio = (evento) => {
     const { name, value } = evento.target
@@ -22,14 +26,14 @@ function RegistroUsuario() {
 
   const validar = () => {
     const nuevosErrores = {}
-    if (usuario.nombres.trim() === '') {
-      nuevosErrores.nombres = 'Los nombres son obligatorios'
+    if (usuario.nombre.trim() === '') {
+      nuevosErrores.nombre = 'Los nombres son obligatorios'
     }
     if (!/^\S+@\S+\.\S+$/.test(usuario.correo)) {
       nuevosErrores.correo = 'Ingrese un correo válido'
     }
-    if (usuario.contraseña.length < 6) {
-      nuevosErrores.contraseña = 'La contraseña debe tener mínimo 6 caracteres'
+    if (usuario.contrasena.length < 6) {
+      nuevosErrores.contrasena = 'La contraseña debe tener mínimo 6 caracteres'
     }
     if (usuario.rol === '') {
       nuevosErrores.rol = 'Seleccione un rol'
@@ -37,13 +41,22 @@ function RegistroUsuario() {
     return nuevosErrores
   }
 
-  const manejarEnvio = (evento) => {
+  const manejarEnvio = async (evento) => {
     evento.preventDefault()
     const nuevosErrores = validar()
     setErrores(nuevosErrores)
+    setErrorServidor('')
     if (Object.keys(nuevosErrores).length === 0) {
-      console.log('Usuario registrado:', usuario)
-      navegar('/home')
+      setEnviando(true)
+      try {
+        const creado = await crearUsuario(usuario)
+        guardarSesion(creado)
+        navegar('/home')
+      } catch (error) {
+        setErrorServidor(error.message)
+      } finally {
+        setEnviando(false)
+      }
     }
   }
 
@@ -52,9 +65,12 @@ function RegistroUsuario() {
       imagen={IMAGEN}
       titulo="Tu unidad residencial, en un solo lugar"
       subtitulo="Reserva zonas comunes y administra los espacios de tu conjunto en Sabaneta."
+      enlaceVolver="/"
     >
       <h2 className="fw-bold mb-1">Crear cuenta</h2>
       <p className="text-muted mb-4">Regístrate para empezar a reservar.</p>
+
+      {errorServidor && <div className="alert alert-danger">{errorServidor}</div>}
 
       <form onSubmit={manejarEnvio} noValidate>
         <div className="mb-3">
@@ -63,13 +79,13 @@ function RegistroUsuario() {
             <span className="input-group-text"><i className="bi bi-person"></i></span>
             <input
               type="text"
-              name="nombres"
+              name="nombre"
               placeholder="Juan Pérez"
-              className={`form-control ${errores.nombres ? 'is-invalid' : ''}`}
-              value={usuario.nombres}
+              className={`form-control ${errores.nombre ? 'is-invalid' : ''}`}
+              value={usuario.nombre}
               onChange={manejarCambio}
             />
-            <div className="invalid-feedback">{errores.nombres}</div>
+            <div className="invalid-feedback">{errores.nombre}</div>
           </div>
         </div>
 
@@ -95,13 +111,13 @@ function RegistroUsuario() {
             <span className="input-group-text"><i className="bi bi-lock"></i></span>
             <input
               type="password"
-              name="contraseña"
+              name="contrasena"
               placeholder="Mínimo 6 caracteres"
-              className={`form-control ${errores.contraseña ? 'is-invalid' : ''}`}
-              value={usuario.contraseña}
+              className={`form-control ${errores.contrasena ? 'is-invalid' : ''}`}
+              value={usuario.contrasena}
               onChange={manejarCambio}
             />
-            <div className="invalid-feedback">{errores.contraseña}</div>
+            <div className="invalid-feedback">{errores.contrasena}</div>
           </div>
         </div>
 
@@ -123,8 +139,8 @@ function RegistroUsuario() {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-marca btn-lg w-100">
-          <i className="bi bi-box-arrow-in-right me-2"></i>Registrarse
+        <button type="submit" className="btn btn-marca btn-lg w-100" disabled={enviando}>
+          <i className="bi bi-box-arrow-in-right me-2"></i>{enviando ? 'Registrando...' : 'Registrarse'}
         </button>
       </form>
     </PanelFormulario>
